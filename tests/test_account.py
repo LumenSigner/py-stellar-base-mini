@@ -6,7 +6,6 @@ from stellar_sdk.exceptions import (
     Ed25519PublicKeyInvalidError,
     MuxedEd25519AccountInvalidError,
 )
-from stellar_sdk.sep.ed25519_public_key_signer import Ed25519PublicKeySigner
 
 
 class TestAccount:
@@ -51,38 +50,6 @@ class TestAccount:
         assert account.sequence == sequence + 1
         assert account.universal_account_id == account_id
 
-    def test_load_ed25519_public_key_signers(self):
-        signers = [
-            {
-                "weight": 10,
-                "key": "XCRJANZNX6PX42O2PTZ5PTKAQYZNQOXHDRF7PI7ANSJSW4RKGT63XCDN",
-                "type": "sha256_hash",
-            },
-            {
-                "weight": 1,
-                "key": "GCV5YZ7R6IAKQCIGDP6TS6GHUXSNWVLP2CNRCUSIPQFRX67LGQRXTCL6",
-                "type": "ed25519_public_key",
-            },
-            {
-                "weight": 2,
-                "key": "GBUGPGCH6YTEOT2CQJDRYPIXK5KTVUZOWIQMLIAOLYKZMPWT23CVQMPH",
-                "type": "ed25519_public_key",
-            },
-        ]
-        account_id = "GA7YNBW5CBTJZ3ZZOWX3ZNBKD6OE7A7IHUQVWMY62W2ZBG2SGZVOOPVH"
-        sequence = 123123
-        account = Account(
-            account=account_id, sequence=sequence, raw_data={"signers": signers}
-        )
-        assert account.load_ed25519_public_key_signers() == [
-            Ed25519PublicKeySigner(
-                "GCV5YZ7R6IAKQCIGDP6TS6GHUXSNWVLP2CNRCUSIPQFRX67LGQRXTCL6", 1
-            ),
-            Ed25519PublicKeySigner(
-                "GBUGPGCH6YTEOT2CQJDRYPIXK5KTVUZOWIQMLIAOLYKZMPWT23CVQMPH", 2
-            ),
-        ]
-
     def test_thresholds(self):
         thresholds = {"low_threshold": 10, "med_threshold": 20, "high_threshold": 30}
         account_id = "GA7YNBW5CBTJZ3ZZOWX3ZNBKD6OE7A7IHUQVWMY62W2ZBG2SGZVOOPVH"
@@ -126,16 +93,6 @@ class TestAccount:
             match='"raw_data" is None, unable to get thresholds from it.',
         ):
             _ = account.thresholds
-
-    def test_load_ed25519_public_key_signers_without_raw_data(self):
-        account_id = "GA7YNBW5CBTJZ3ZZOWX3ZNBKD6OE7A7IHUQVWMY62W2ZBG2SGZVOOPVH"
-        sequence = 123123
-        account = Account(account=account_id, sequence=sequence)
-        with pytest.raises(
-            ValueError,
-            match='"raw_data" is None, unable to get signers from it.',
-        ):
-            account.load_ed25519_public_key_signers()
 
     def test_equals(self):
         account1 = Account(

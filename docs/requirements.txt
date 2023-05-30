@@ -1,5 +1,0 @@
-sphinx
-sphinx-rtd-theme
-sphinx-autodoc-typehints
-# install stellar-sdk in the readthedocs.io environment
-.

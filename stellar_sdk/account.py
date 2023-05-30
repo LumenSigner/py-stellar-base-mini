@@ -1,13 +1,11 @@
 from typing import Any, Dict, List, Optional, Union
 
 from .muxed_account import MuxedAccount
-from .sep.ed25519_public_key_signer import Ed25519PublicKeySigner
-from .type_checked import type_checked
+
 
 __all__ = ["Account"]
 
 
-@type_checked
 class Account:
     """The :class:`Account` object represents a single
     account on the Stellar network and its sequence number.
@@ -75,20 +73,6 @@ class Account:
             self.raw_data["thresholds"]["high_threshold"],
         )
 
-    def load_ed25519_public_key_signers(self) -> List[Ed25519PublicKeySigner]:
-        """Load ed25519 public key signers."""
-        if self.raw_data is None:
-            raise ValueError('"raw_data" is None, unable to get signers from it.')
-
-        signers = self.raw_data["signers"]
-        ed25519_public_key_signers = []
-        for signer in signers:
-            if signer["type"] == "ed25519_public_key":
-                ed25519_public_key_signers.append(
-                    Ed25519PublicKeySigner(signer["key"], signer["weight"])
-                )
-        return ed25519_public_key_signers
-
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return NotImplemented
@@ -98,7 +82,6 @@ class Account:
         return f"<Account [account={self.account}, sequence={self.sequence}]>"
 
 
-@type_checked
 class Thresholds:
     def __init__(
         self, low_threshold: int, med_threshold: int, high_threshold: int
