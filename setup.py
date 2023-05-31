@@ -8,7 +8,6 @@ install_requires = [
     "mnemonic==0.20",
     "pycparser==2.21",
     "PyNaCl==1.5.0",
-    "toml==0.10.2",
 ]
 
 about = {}
